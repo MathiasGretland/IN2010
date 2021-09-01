@@ -1,2 +1,5 @@
-package uke1;public class BinertSokeTre {
+package uke1;
+
+public class BinertSokeTre <T>{
+
 }
