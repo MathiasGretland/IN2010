@@ -72,5 +72,5 @@ lenkeListe.start.parent = karl
 karl.parent = thomas
 
 lenkeListe.listePrint()
-dybde = lenkeListe.depth(thomas)
+dybde = lenkeListe.depth(james)
 print(dybde)
