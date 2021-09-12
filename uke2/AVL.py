@@ -87,14 +87,9 @@ class AVL:
 
     # Procedure for å finne minste løvnode
     def findMin(self, v):
-        if v is None:
-            return None
-        else:
-            if v.element <= v.left.element:
-                v.left = self.insert(v.left, v.element)
-            else:
-                v.right = self.insert(v.right, v.element)
+        if v is None or v.left is None:
             return v
+        return self.findMin(v.left)
 
 
 # Parameteret v er en node
@@ -103,3 +98,8 @@ mittTre = AVL()
 root = None
 
 root = mittTre.insert(root, 10)
+root = mittTre.insert(root, 20)
+root = mittTre.insert(root, 25)
+root = mittTre.insert(root, 15)
+root = mittTre.insert(root, 35)
+root = mittTre.insert(root, 22)
