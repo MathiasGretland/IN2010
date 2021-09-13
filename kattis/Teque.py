@@ -16,7 +16,6 @@ class Teque:
         print(self.koe[i])
 
 
-
 koen = Teque()
 
 kommandoer = []
@@ -37,7 +36,3 @@ for i in kommandoer:
         koen.push_middle(tall)
     elif kommando == "get":
         koen.get(tall)
-
-
-
-    
