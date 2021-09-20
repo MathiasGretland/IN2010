@@ -90,6 +90,7 @@ class Graf:
 
     # Topologisk sortering
     def topologiskSortering(self):
+<<<<<<< HEAD
         if (not self.rettet):
             print("ERROR: Kan ikke topologisk sortere en utrettet graf")
             return
@@ -99,6 +100,10 @@ class Graf:
         stack = []
         for data in self.graf:
             node = self.graf[data]
+=======
+        stack = []
+        for node in self.graf:
+>>>>>>> ed54cef0d678a103f7b2f1e53ea03cacfe35bfd1
             if node.inDeg is 0:
                 stack.append(node)
 
