@@ -1,3 +1,7 @@
+import heapq
+from random import randint
+
+
 class Node:
     def __init__(self, data):
         self.data = data
@@ -34,6 +38,11 @@ class Graf:
         if (data not in self.graf):
             self.graf[data] = Node(data)
         return self.graf[data]
+
+    def hentTilfeldigNode(self):
+        lengde = len(self.graf)
+        tilfeldigTall = randint(0, lengde)
+        return self.graf[tilfeldigTall]
 
     def __str__(self):
         penStr = ""
@@ -77,7 +86,7 @@ class Graf:
         startNode.besokt = True
         queue.append(startNode)
 
-        while len(queue) is not 0:
+        while len(queue) != 0:
             v = queue.pop(0)
 
             for kant in v.naboer:
@@ -98,12 +107,12 @@ class Graf:
         stack = []
         for data in self.graf:
             node = self.graf[data]
-            if node.inDeg is 0:
+            if node.inDeg == 0:
                 stack.append(node)
 
         i = 0
         output = []
-        while len(stack) is not 0:
+        while len(stack) != 0:
             node = stack.pop()
             print(str(node.data) + " -> ", end="")
             output.append(node)
@@ -111,7 +120,7 @@ class Graf:
 
             for nabo in node.naboer:
                 nabo.inDeg -= 1
-                if nabo.inDeg is 0:
+                if nabo.inDeg == 0:
                     stack.append(nabo)
 
         if i is len(self.graf):
@@ -119,9 +128,64 @@ class Graf:
         else:
             print("*STOP!* Grafen har en syklus")
 
+    # Blir nytt for uke5
+    # -------------------------------------------------
 
-#
-# ------------------------------------------------------------------------------
+    def prim(self):
+        tree = TreNode(None)
+        q = []
+        """
+        Husk at dette er en heapq, og må derfor bruke metodene
+        heappush() og heappop() for å legge til samt fjerne noder.
+        """
+        kostnad = []
+
+        for node in self.graf:
+            kostnad[node] = 9999999
+            n = (node, None)
+            heapq.heappush(q, (n, kostnad[node]))
+
+        v = self.hentTilfeldigNode()
+        kostnad[v] = 0
+    # -------------------------------------------------
+
+
+class TreNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+        self.forelder = None
+
+    def setForelder(self, nyForelder):
+        self.forelder = nyForelder
+
+    def depth(self, v):
+        if (self.forelder == None):
+            return -1
+        return 1 + self.depth(self.forelder)
+
+    def insert(self, data):
+        if self.data:
+            if data < self.data:
+                if self.left is None:
+                    self.left = TreNode(data)
+                else:
+                    self.left.insert(data)
+            elif data > self.data:
+                if self.right is None:
+                    self.right = TreNode(data)
+                else:
+                    self.right.insert(data)
+        else:
+            self.data = data
+
+    def printTree(self):
+        if self.left:
+            self.left.printTree()
+        print(self.data)
+        if self.right:
+            self.right.printTree()
 
 
 def main():
@@ -149,34 +213,7 @@ def main():
     foilGraf.BFS("A")
     foilGraf.settNoderUbesokt()
 
-    print()
-    print()
-
-    # Topologisk sortering
-    morgenRutine = Graf(True)
-    morgenRutine.leggTilKant("Dusj", "Undertøy")
-    morgenRutine.leggTilKant("Dusj", "Sokker")
-    morgenRutine.leggTilKant("Dusj", "Bukse")
-    morgenRutine.leggTilKant("Dusj", "T-skjorte")
-    morgenRutine.leggTilKant("Undertøy", "Bukse")
-    morgenRutine.leggTilKant("Sokker", "Sko")
-    morgenRutine.leggTilKant("Bukse", "Jakke")
-    morgenRutine.leggTilKant("Bukse", "Sko")
-    morgenRutine.leggTilKant("T-skjorte", "Jakke")
-    morgenRutine.leggTilKant("Jakke", "Dra")
-    morgenRutine.leggTilKant("Bukse", "Dra")
-    morgenRutine.leggTilKant("Sko", "Dra")
-    morgenRutine.leggTilKant("Frokost", "Pusse tenner")
-    morgenRutine.leggTilKant("Frokost", "Dra")
-    morgenRutine.leggTilKant("Pusse tenner", "Dra")
-
-    # Disse to linjene skaper to sykler
-    morgenRutine.leggTilKant("Sko", "Sokker")
-    morgenRutine.leggTilKant("Dra", "Dusj")
-
-    print(morgenRutine)
-    print("\n---( Kaller på topologiskSortering )---")
-    morgenRutine.topologiskSortering()
+    foilGraf.prim()
 
 
 main()
