@@ -38,11 +38,28 @@ class Graf:
 
         dot.render('graph', format='svg', view=True)
 
+    def dfs(G, s):
+        _, E, _ = G
+        visited = set([s])
+        stack = [s]
+        result = []
+
+        while stack:
+            v = stack.pop()
+            result.append(v)
+            for u in E[v]:
+                if u not in visited:
+                    visited.add(u)
+                    stack.append(u)
+        return result
+
 
 def main():
     lines = open("uke5/lines.txt", "r")
     G = Graf.buildgraph(lines)
-    Graf.drawgraph(G)
+    # Graf.drawgraph(G)
+    dfsResultat = Graf.dfs(G, 'A')
+    print(dfsResultat)
 
 
 main()
