@@ -1,5 +1,7 @@
 from collections import defaultdict
 import graphviz
+from collections import deque
+import heapq
 
 
 class Graf:
@@ -53,6 +55,57 @@ class Graf:
                     stack.append(u)
         return result
 
+    def bfs(G, s):
+        _, E, _ = G
+        visited = set([s])
+        queue = deque([s])
+        resultat = []
+
+        while queue:
+            v = deque.popleft(queue)
+            resultat.append(v)
+            for u in E[v]:
+                if u not in visited:
+                    visited.add(u)
+                    queue.append(u)
+        return resultat
+
+    def bfs_shortest_paths_from(G, s):
+        _, E, _ = G
+        parents = {s: None}
+        queue = deque([s])
+        result = []
+
+        while queue:
+            v = deque.popleft(queue)
+            result.append(v)
+            for u in E[v]:
+                if u not in parents:
+                    parents[u] = v
+                    queue.append(u)
+
+        return parents
+
+    def draw_parents(parents):
+        dot = graphviz.Graph()
+        for v in parents:
+            u = parents[v]
+            if u:
+                dot.edge(v, u)
+        dot.render('bfs_spanningtree', format='svg', view=True)
+
+    def dijkstra(G, s):
+        N, _, _ = G
+        # Husk at når man legger til i queue så må du bruke HeapQ
+        queue = []
+        D = defaultdict(lambda: float('inf'))
+        for v in N:
+            D[v] = 999999
+            heapq.heappush(queue, D[v])
+        D[s] = 0
+
+        # while queue:
+
 
 def main():
     lines = open("uke5/lines.txt", "r")
@@ -60,6 +113,17 @@ def main():
     # Graf.drawgraph(G)
     dfsResultat = Graf.dfs(G, 'A')
     print(dfsResultat)
+
+    bfsResultat = Graf.bfs(G, 'A')
+    print(bfsResultat)
+
+    bfsShortestResultat = Graf.bfs_shortest_paths_from(G, 'A')
+    print(bfsShortestResultat)
+    # Graf.draw_parents(bfsShortestResultat)
+    print()
+    print()
+
+    dijkstra = Graf.dijkstra(G, 'A')
 
 
 main()
