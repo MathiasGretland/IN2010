@@ -95,17 +95,21 @@ class Graf:
         dot.render('bfs_spanningtree', format='svg', view=True)
 
     def dijkstra(G, s):
-        N, _, _ = G
+        _, E, w = G
         # Husk at når man legger til i queue så må du bruke HeapQ
-        queue = []
+        queue = [(0,s)]
         D = defaultdict(lambda: float('inf'))
-        for v in N:
-            D[v] = 999999
-            heapq.heappush(queue, D[v])
         D[s] = 0
+        
+        while queue:
+            cost, v = heapq.heappop(queue)
+            for u in E[v]:
+                c = cost + w[(v,u)]
+                if c < D[u]:
+                    D[u] = c
+                    heapq.heappush(queue, (c,u))
 
-        # while queue:
-
+        return D
 
 def main():
     lines = open("uke5/lines.txt", "r")
@@ -119,11 +123,11 @@ def main():
 
     bfsShortestResultat = Graf.bfs_shortest_paths_from(G, 'A')
     print(bfsShortestResultat)
-    # Graf.draw_parents(bfsShortestResultat)
+    #Graf.draw_parents(bfsShortestResultat)
     print()
     print()
 
     dijkstra = Graf.dijkstra(G, 'A')
-
+    #Graf.drawgraph(dijkstra)
 
 main()
