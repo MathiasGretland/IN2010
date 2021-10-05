@@ -22,6 +22,7 @@ class Graf:
             w[(v, u)] = int(weight)
             w[(u, v)] = int(weight)
 
+        print(E)
         return V, E, w
 
     def drawgraph(G):
@@ -97,19 +98,43 @@ class Graf:
     def dijkstra(G, s):
         _, E, w = G
         # Husk at når man legger til i queue så må du bruke HeapQ
-        queue = [(0,s)]
+        queue = [(0, s)]
         D = defaultdict(lambda: float('inf'))
         D[s] = 0
-        
+
         while queue:
             cost, v = heapq.heappop(queue)
             for u in E[v]:
-                c = cost + w[(v,u)]
+                c = cost + w[(v, u)]
                 if c < D[u]:
                     D[u] = c
-                    heapq.heappush(queue, (c,u))
+                    heapq.heappush(queue, (c, u))
 
         return D
+
+    def bellmanFord(G, s):
+        V, E, w = G
+        D = defaultdict(lambda: float('inf'))
+        for node in V:
+            D[node] = float('inf')
+        D[s] = 0
+
+        # Little problem med t, må klare å finne en måte å få tak i hver kant
+        for i in range(1, len(V)-1):
+            t = V.pop()
+            for u in E[t]:
+                if D[u] + w[(t, u)] < D[t]:
+                    D[t] = D[u] + w[(t, u)]
+
+        """
+        for i in range(1, len(V)-1):
+            t = V.pop()
+            for u in E[t]:
+                if D[u] + w[(t, u)] < D[t]:
+                    return "G has a negative cycle"
+        """
+        return D
+
 
 def main():
     lines = open("uke5/lines.txt", "r")
@@ -123,11 +148,14 @@ def main():
 
     bfsShortestResultat = Graf.bfs_shortest_paths_from(G, 'A')
     print(bfsShortestResultat)
-    #Graf.draw_parents(bfsShortestResultat)
+    # Graf.draw_parents(bfsShortestResultat)
     print()
     print()
 
     dijkstra = Graf.dijkstra(G, 'A')
-    #Graf.drawgraph(dijkstra)
+    # Graf.drawgraph(dijkstra)
+    bellmanford = Graf.bellmanFord(G, 'A')
+    print(bellmanford)
+
 
 main()
