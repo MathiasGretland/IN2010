@@ -6,9 +6,8 @@ def buildgraph():
 
     V = set()
     E = defaultdict(set)
-    w = dict()
+    w = defaultdict(list)
     # Kant skal bestå av to skuespillere som er bundet til en film
-
     # ActorToMovies er hashmap hvor "id-name" er nøkkel og "filmene" er verdier,
     # idToName er også hashmap hvor "id-name" er nøkkel og "navnet" er skuespillernavnet
     actorToMovies, idToName = readFromFileActors()
@@ -22,24 +21,22 @@ def buildgraph():
         V.add(actor)
         # Går igjennom alle filmer som en gitt skuespiller finnes i
         for movie in actorToMovies[actor]:
-
-            # kan hende vi maa sjekke lengde istedenfor fordi den har default value
-            if len(movieActors[movie]) > 0:
+            if not movie in movieRating:
+                continue
+            if movieActors[movie]:
                 for otherActor in movieActors[movie]:
+                    E[actor].add(otherActor)
+                    E[otherActor].add(actor)
 
-                    if movie in movieRating:
-                        E[actor].add(otherActor)
-                        E[otherActor].add(actor)
-
-                        w[(actor, otherActor)] = float(movieRating[movie])
-                        w[(otherActor, actor)] = float(movieRating[movie])
+                    w[(actor, otherActor)].append(float(movieRating[movie]))
+                    w[(otherActor, actor)].append(float(movieRating[movie]))
 
             movieActors[movie].append(actor)  # legge til skuspiller til film
 
     antallNoder(V)
 
-    print(len(movieRating))
-    print(len(w)/2)
+    antallKanter(w)
+
     return V, E, w
 
 
@@ -47,47 +44,52 @@ def antallNoder(V):
     print(len(V))
 
 
-def antallKanter():
-    pass
+def antallKanter(w):
+    antallKanter = 0
+    for node in w.keys():
+        antallKanter += len(w[node]) / 2
+    print(int(antallKanter))
 
 
 def readFromFileMovies():
     # tt-id Tittel Rating AntallStemmer
-    tsv_file = open('oblig2/movies.tsv')
-    file = csv.reader(tsv_file, delimiter="\t")
+
     movieIdToName = dict()
     movieRating = dict()
+    with open('oblig2/movies.tsv', encoding='utf8') as csvfile:
+        csvreader = csv.reader(csvfile, delimiter='\t')
 
-    for line in file:
-        data = line
-        id = data[0]
-        tittel = data[1]
-        rating = data[2]
-        movieRating[id] = rating
-        movieIdToName[id] = tittel
-    tsv_file.close()
+        for line in csvreader:
+            data = line
+            id = data[0]
+            tittel = data[1]
+            rating = data[2]
+            movieRating[id] = rating
+            movieIdToName[id] = tittel
+
     return movieIdToName, movieRating
 
 
 def readFromFileActors():
     # nm-id Navn tt-id1 tt-id2 . . . tt-idk
-    tsv_file = open('oblig2/actors.tsv')
-    file = csv.reader(tsv_file, delimiter="\t")
     actorToMovies = {}
     idToName = {}
 
-    for line in file:
-        data = line
-        id = data[0]
-        name = data[1]
-        movies = set()
+    with open('oblig2/actors.tsv', encoding='utf8') as csvfile:
+        csvreader = csv.reader(csvfile, delimiter='\t')
 
-        for movie in data[2:]:
-            movies.add(movie)
+        for line in csvreader:
+            data = line
+            id = data[0]
+            name = data[1]
+            movies = set()
 
-        actorToMovies[id] = movies
-        idToName[id] = name
-    tsv_file.close()
+            for movie in data[2:]:
+                movies.add(movie)
+
+            actorToMovies[id] = movies
+            idToName[id] = name
+
     return actorToMovies, idToName
 
 
