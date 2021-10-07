@@ -153,9 +153,9 @@ def main():
     print()
 
     dijkstra = Graf.dijkstra(G, 'A')
+    print(dijkstra)
     # Graf.drawgraph(dijkstra)
     bellmanford = Graf.bellmanFord(G, 'A')
-    print(bellmanford)
 
 
 main()
