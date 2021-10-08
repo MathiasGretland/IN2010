@@ -1,7 +1,8 @@
 from collections import defaultdict
+from heapq import heappush, heappop
+from collections import deque
+from typing import DefaultDict
 import csv
-from heapq import heappop, heappush
-
 
 def buildgraph():
 
@@ -29,7 +30,7 @@ def buildgraph():
                 for otherActor in movieActors[movie]:
                     E[actor].add(otherActor)
                     E[otherActor].add(actor)
-
+                    
                     w[(actor, otherActor)].append(
                         (float(movieRating[movie]), movie)
                     )
@@ -53,6 +54,7 @@ def antallKanter(G):
     for node in w.keys():
         antallKanter += len(w[node]) / 2
     print(int(antallKanter))
+
 
 
 def readFromFileMovies():
@@ -96,24 +98,24 @@ def readFromFileActors():
 
     return actorToMovies, idToName
 
-
+ 
 def kortesteVei(G, fra, til):
     V, E, w, idToName, movieIdToName, _ = G
-
+    
     Q = [(0, fra)]
     D = defaultdict(lambda: float('inf'))
     D[fra] = 0
     parents = {fra: None}
 
+
     while Q:
         cost, v = heappop(Q)
         if v == til:
             break
-
-        sjekk = E[v]
+        
         for u in E[v]:
             listeOverFilmer = w[(v, u)]
-            # Lager tuppel hvor rating er første verdien imens filmid er andre
+            # Lager tuppel hvor rating er første verdien imens filmid er andre 
             minsteTuppel = max(listeOverFilmer)
             minsteVerdi = 10 - minsteTuppel[0]
             minsteId = minsteTuppel[1]
@@ -140,6 +142,7 @@ def skrivKortesteVei(G, parents, fra, til):
 
     strenge = ""
     listeData.reverse()
+    totalvekt = 0
     for linje in listeData:
         skuspillerID = linje[0]
         filmID = linje[1]
@@ -149,34 +152,142 @@ def skrivKortesteVei(G, parents, fra, til):
         strenge += skuespillerNavn + "\n" + \
             "===[" + filmNavn + \
             " ( " + movieRating[filmID] + " ) " + "]" + "===> "
+        totalvekt += 10 - float(movieRating[filmID])
 
-    strenge += str(idToName[til])
+    strenge += str(idToName[til] + "\n" +
+                   "Total weight: " + ("%.1f" % totalvekt) + "\n")
 
     return strenge
 
-# Vi må huske å legge til total vekt
+def bfsShortestPath(G, fra, til):
+    _, E, w, idToName, movieIdToName, movieRating = G
+    parents = {fra: None}
+    queue = deque([fra])
+    result = []
+
+    while queue:
+        v = deque.popleft(queue)
+        result.append(v)
+        if v == til:
+            break
+        for neighbor in E[v]:
+            if neighbor not in parents:
+                listeOverFilmer = w[(v, neighbor)]
+                filmratingOgId = listeOverFilmer[0]
+                filmId = filmratingOgId[1]
+                parents[neighbor] = (v, filmId)
+                queue.append(neighbor)
+
+    return parents
+
+def shortestPathBetween(G, fra, til):
+    parents = bfsShortestPath(G, fra, til)
+    current = parents[til]
+    path = []
+    _, E, w, idToName, movieIdToName, movieRating = G
+
+    if til not in parents:
+        return path
+
+    while current and current[0] in parents:
+        skuspillerID = current[0]
+        path.append([current[0], current[1]])
+
+        current = parents[skuspillerID]
+
+    linjeData =  path[::-1]
+
+    strenge = ""
+    for linje in linjeData:
+        skuspillerID = linje[0]
+        filmID = linje[1]
+        skuespillerNavn = idToName[skuspillerID]
+        filmNavn = movieIdToName[filmID]
+
+        strenge += skuespillerNavn + "\n" + \
+            "===[" + filmNavn + \
+            " ( " + movieRating[filmID] + " ) " + "]" + "===> "
+            
+    strenge += str(idToName[til] + "\n")
+
+    return strenge
+
+def komponenter(G):
+    V, E, _, _, _, _ = G
+
+    antallAvStorrelse = defaultdict(int) #antallAvStorrelse[storrelse] = antall
+
+    alleKomponenter = []
+    alleVisited = set()
+
+    for s in V:
+        if s in alleVisited:
+            continue
+
+        visited = set([s])
+        stack = [s]
+        result = []
+
+        while stack:
+            v = stack.pop()
+            result.append(v)
+            for u in E[v]:
+                if u not in visited:
+                    visited.add(u)
+                    alleVisited.add(u)
+                    stack.append(u)
+        alleKomponenter.append(result)
+    
+    for komponent in alleKomponenter:
+        l = len(komponent)
+        antallAvStorrelse[l] += 1
+
+    
 
 
-G = buildgraph()
-antallNoder(G)
+    return antallAvStorrelse
 
-antallKanter(G)
 
-parents = kortesteVei(G, 'nm2255973', 'nm0000460')
-print(parents)
-print()
+def utskriftKomponenter(G):
 
-parents = kortesteVei(G, 'nm0424060', 'nm0000243')
-print(parents)
-print()
+    antallAvStorrelse = komponenter(G)
 
-parents = kortesteVei(G, 'nm4689420', 'nm0000365')
-print(parents)
-print()
+    dictionary_items = antallAvStorrelse.items()
 
-parents = kortesteVei(G, 'nm0000288', 'nm0001401')
-print(parents)
-print()
+    sorted_items = sorted(dictionary_items, reverse=True)
+    
+    strenge = ""
+    for storrelseAntall in sorted_items:
+        strenge += f"There are {storrelseAntall[1]} components of size {storrelseAntall[0]} \n"
+    
+    return strenge
 
-parents = kortesteVei(G, 'nm0031483', 'nm0931324')
-print(parents)
+
+def main():
+    #Oppgave 1
+    G = buildgraph()
+    print("Oppgave 1: \n")
+    antallNoder(G)
+    antallKanter(G)
+
+    #Oppgave 2
+    print("Oppgave 2: \n")
+    print(shortestPathBetween(G, 'nm2255973', 'nm0000460'))
+    print(shortestPathBetween(G, 'nm0424060', 'nm0000243'))
+    print(shortestPathBetween(G, 'nm4689420', 'nm0000365'))
+    print(shortestPathBetween(G, 'nm0000288', 'nm0001401'))
+    print(shortestPathBetween(G, 'nm0031483', 'nm0931324'))
+
+    #Oppgave 3
+    print("Oppgave 3: \n")
+    print(kortesteVei(G, 'nm2255973', 'nm0000460'))
+    print(kortesteVei(G, 'nm0424060', 'nm0000243'))
+    print(kortesteVei(G, 'nm4689420', 'nm0000365'))
+    print(kortesteVei(G, 'nm0000288', 'nm0001401'))
+    print(kortesteVei(G, 'nm0031483', 'nm0931324'))
+
+    #oppgave 4
+    print("Oppgave 4: \n")
+    print(utskriftKomponenter(G))
+
+main()
