@@ -2,32 +2,32 @@ from collections import defaultdict
 from heapq import heappush, heappop
 from collections import deque
 from typing import DefaultDict
-import csv
 
+# Bygger grafen som er inspirert fra Lars sin implementasjon i forelesningsnotatet 
 def buildgraph():
 
     V = set()
     E = defaultdict(set)
     w = defaultdict(list)
 
-    # Kant skal bestå av to skuespillere som er bundet til en film
+    # Kant skal bestaa av to skuespillere som er bundet til en film
     # ActorToMovies er hashmap hvor "id-name" er nøkkel og "filmene" er verdier,
-    # idToName er også hashmap hvor "id-name" er nøkkel og "navnet" er skuespillernavnet
+    # idToName er ogsaa hashmap hvor "id-name" er nøkkel og "navnet" er skuespillernavnet
     actorToMovies, idToName = readFromFileActors()
 
     movieIdToName, movieRating = readFromFileMovies()
 
     movieActors = defaultdict(list)
 
-    # Går igjennom alle skuespillere knyttet til en gitt film
+    # Gaar igjennom alle skuespillere knyttet til en gitt film
     for actor in actorToMovies.keys():
         V.add(actor)
         # Går igjennom alle filmer som en gitt skuespiller finnes i
         for movie in actorToMovies[actor]:
-            if not movie in movieRating:
+            if not movie in movieRating: #hvis filmen ikke har noen vekt
                 continue
-            if movieActors[movie]:
-                for otherActor in movieActors[movie]:
+            if movieActors[movie]: #hvis filmen allerede er i dict
+                for otherActor in movieActors[movie]: #lag kanter og vekter mellom alle andre skuspillere
                     E[actor].add(otherActor)
                     E[otherActor].add(actor)
                     
@@ -42,71 +42,75 @@ def buildgraph():
 
     return V, E, w, idToName, movieIdToName, movieRating
 
-
+#Returnerer antall noder(skuespillere) som finnes i grafen
 def antallNoder(G):
     V, _, _, _, _, _ = G
-    print(len(V))
+    return(len(V))
 
-
+#Returnerer antall kanter(film mellom to skuespillere) som finnes i grafen
+#ved aa dele antall vekter paa 2
 def antallKanter(G):
     V, _, w, _, _, _ = G
     antallKanter = 0
     for node in w.keys():
         antallKanter += len(w[node]) / 2
-    print(int(antallKanter))
+    return int(antallKanter)
 
-
-
+# Returnerer ordboeker for 
+# filmidTilNavn(filmid er noekkel, navnet er verdien) 
+# filmTilRating(filmid er noekkel, rating er verdien)
+# fra movies.tsv fil
 def readFromFileMovies():
-    # tt-id Tittel Rating AntallStemmer
-
+    #tt-id Tittel Rating AntallStemmer
+    file = open('oblig2/movies.tsv', encoding="utf8") #Filplassering
     movieIdToName = dict()
     movieRating = dict()
-    with open('oblig2/movies.tsv', encoding='utf8') as csvfile:
-        csvreader = csv.reader(csvfile, delimiter='\t')
 
-        for line in csvreader:
-            data = line
-            id = data[0]
-            tittel = data[1]
-            rating = data[2]
-            movieRating[id] = rating
-            movieIdToName[id] = tittel
+    for line in file:
+        data = line.strip().split('\t')
+        id = data[0]
+        tittel = data[1]
+        rating = data[2]
+        movieRating[id] = rating
+        movieIdToName[id] = tittel
+
+    file.close()
 
     return movieIdToName, movieRating
 
-
+# Returnerer ordboeker for
+# actorToMovies(skuespillerid er noekkel, filmID er verdien)
+# idToName(skuespillerid er noekkel, navnet på skuespilleren er verdien)
+# fra actors.tsv fil
 def readFromFileActors():
-    # nm-id Navn tt-id1 tt-id2 . . . tt-idk
+    #nm-id Navn tt-id1 tt-id2 . . . tt-idk
+    file = open('oblig2/actors.tsv', encoding="utf8") #Filplassering
     actorToMovies = {}
     idToName = {}
 
-    with open('oblig2/actors.tsv', encoding='utf8') as csvfile:
-        csvreader = csv.reader(csvfile, delimiter='\t')
+    for line in file:
+        data = line.strip().split('\t')
+        id = data[0]
+        name = data[1]
+        movies = set()
 
-        for line in csvreader:
-            data = line
-            id = data[0]
-            name = data[1]
-            movies = set()
+        for movie in data[2:]:
+            movies.add(movie)
 
-            for movie in data[2:]:
-                movies.add(movie)
-
-            actorToMovies[id] = movies
-            idToName[id] = name
-
+        actorToMovies[id] = movies
+        idToName[id] = name
+    file.close()
     return actorToMovies, idToName
 
- 
+# Returnerer dict med foreldre noder med forelder og vekt mellom dem
+# korteste vei er basert på vekten, og funnet ved hjelp av Dijkstra-algoritmen 
 def kortesteVei(G, fra, til):
-    V, E, w, idToName, movieIdToName, _ = G
+    _, E, w, _, _, _ = G
     
     Q = [(0, fra)]
     D = defaultdict(lambda: float('inf'))
     D[fra] = 0
     parents = {fra: None}
-
 
     while Q:
         cost, v = heappop(Q)
@@ -115,7 +119,7 @@ def kortesteVei(G, fra, til):
         
         for u in E[v]:
             listeOverFilmer = w[(v, u)]
-            # Lager tuppel hvor rating er første verdien imens filmid er andre 
+            # Lager tuppel hvor rating er foerste verdien imens filmid er andre 
             minsteTuppel = max(listeOverFilmer)
             minsteVerdi = 10 - minsteTuppel[0]
             minsteId = minsteTuppel[1]
@@ -127,7 +131,7 @@ def kortesteVei(G, fra, til):
 
     return skrivKortesteVei(G, parents, fra, til)
 
-
+# Skriver ut korteste vei fra dict parents, og lager utskrivbar strenge fra denne
 def skrivKortesteVei(G, parents, fra, til):
     V, E, w, idToName, movieIdToName, movieRating = G
 
@@ -159,6 +163,7 @@ def skrivKortesteVei(G, parents, fra, til):
 
     return strenge
 
+# Returnerer stien mellom "fra" og "til" i en ordbok
 def bfsShortestPath(G, fra, til):
     _, E, w, idToName, movieIdToName, movieRating = G
     parents = {fra: None}
@@ -180,6 +185,7 @@ def bfsShortestPath(G, fra, til):
 
     return parents
 
+# Returnerer strengen som skal skrive korteste vei mellom "fra" og "til"
 def shortestPathBetween(G, fra, til):
     parents = bfsShortestPath(G, fra, til)
     current = parents[til]
@@ -212,6 +218,11 @@ def shortestPathBetween(G, fra, til):
 
     return strenge
 
+#metoden gjoer et dybde forst sok, og gaar igjennom alle skuspillere
+#legger alle skuspillere som kan naas fra en node(komponent), i en liste, 
+# og legger denne i enda en liste
+#sjekker saa lengden paa alle lister i listen, og mapper storrelsen paa komponenten
+#til antall av storrelsen, og returnerer denne dictionayen
 def komponenter(G):
     V, E, _, _, _, _ = G
 
@@ -243,11 +254,9 @@ def komponenter(G):
         antallAvStorrelse[l] += 1
 
     
-
-
     return antallAvStorrelse
 
-
+#lager en utskrivbar strenge fra dictionary antallAvStorrelse
 def utskriftKomponenter(G):
 
     antallAvStorrelse = komponenter(G)
@@ -267,8 +276,8 @@ def main():
     #Oppgave 1
     G = buildgraph()
     print("Oppgave 1: \n")
-    antallNoder(G)
-    antallKanter(G)
+    print(antallNoder(G))
+    print(str(antallKanter(G)) + "\n")
 
     #Oppgave 2
     print("Oppgave 2: \n")
