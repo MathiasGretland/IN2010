@@ -3,7 +3,9 @@ from heapq import heappush, heappop
 from collections import deque
 from typing import DefaultDict
 
-# Bygger grafen som er inspirert fra Lars sin implementasjon i forelesningsnotatet 
+# Bygger grafen som er inspirert fra Lars sin implementasjon i forelesningsnotatet
+
+
 def buildgraph():
 
     V = set()
@@ -24,13 +26,14 @@ def buildgraph():
         V.add(actor)
         # Går igjennom alle filmer som en gitt skuespiller finnes i
         for movie in actorToMovies[actor]:
-            if not movie in movieRating: #hvis filmen ikke har noen vekt
+            if not movie in movieRating:  # hvis filmen ikke har noen vekt
                 continue
-            if movieActors[movie]: #hvis filmen allerede er i dict
-                for otherActor in movieActors[movie]: #lag kanter og vekter mellom alle andre skuspillere
+            if movieActors[movie]:  # hvis filmen allerede er i dict
+                # lag kanter og vekter mellom alle andre skuspillere
+                for otherActor in movieActors[movie]:
                     E[actor].add(otherActor)
                     E[otherActor].add(actor)
-                    
+
                     w[(actor, otherActor)].append(
                         (float(movieRating[movie]), movie)
                     )
@@ -42,13 +45,17 @@ def buildgraph():
 
     return V, E, w, idToName, movieIdToName, movieRating
 
-#Returnerer antall noder(skuespillere) som finnes i grafen
+# Returnerer antall noder(skuespillere) som finnes i grafen
+
+
 def antallNoder(G):
     V, _, _, _, _, _ = G
     return(len(V))
 
-#Returnerer antall kanter(film mellom to skuespillere) som finnes i grafen
-#ved aa dele antall vekter paa 2
+# Returnerer antall kanter(film mellom to skuespillere) som finnes i grafen
+# ved aa dele antall vekter paa 2
+
+
 def antallKanter(G):
     V, _, w, _, _, _ = G
     antallKanter = 0
@@ -56,13 +63,15 @@ def antallKanter(G):
         antallKanter += len(w[node]) / 2
     return int(antallKanter)
 
-# Returnerer ordboeker for 
-# filmidTilNavn(filmid er noekkel, navnet er verdien) 
+# Returnerer ordboeker for
+# filmidTilNavn(filmid er noekkel, navnet er verdien)
 # filmTilRating(filmid er noekkel, rating er verdien)
 # fra movies.tsv fil
+
+
 def readFromFileMovies():
-    #tt-id Tittel Rating AntallStemmer
-    file = open('oblig2/movies.tsv', encoding="utf8") #Filplassering
+    # tt-id Tittel Rating AntallStemmer
+    file = open('oblig2/movies.tsv', encoding="utf8")  # Filplassering
     movieIdToName = dict()
     movieRating = dict()
 
@@ -82,9 +91,11 @@ def readFromFileMovies():
 # actorToMovies(skuespillerid er noekkel, filmID er verdien)
 # idToName(skuespillerid er noekkel, navnet på skuespilleren er verdien)
 # fra actors.tsv fil
+
+
 def readFromFileActors():
-    #nm-id Navn tt-id1 tt-id2 . . . tt-idk
-    file = open('oblig2/actors.tsv', encoding="utf8") #Filplassering
+    # nm-id Navn tt-id1 tt-id2 . . . tt-idk
+    file = open('oblig2/actors.tsv', encoding="utf8")  # Filplassering
     actorToMovies = {}
     idToName = {}
 
@@ -103,10 +114,12 @@ def readFromFileActors():
     return actorToMovies, idToName
 
 # Returnerer dict med foreldre noder med forelder og vekt mellom dem
-# korteste vei er basert på vekten, og funnet ved hjelp av Dijkstra-algoritmen 
+# korteste vei er basert på vekten, og funnet ved hjelp av Dijkstra-algoritmen
+
+
 def kortesteVei(G, fra, til):
     _, E, w, _, _, _ = G
-    
+
     Q = [(0, fra)]
     D = defaultdict(lambda: float('inf'))
     D[fra] = 0
@@ -116,10 +129,10 @@ def kortesteVei(G, fra, til):
         cost, v = heappop(Q)
         if v == til:
             break
-        
+
         for u in E[v]:
             listeOverFilmer = w[(v, u)]
-            # Lager tuppel hvor rating er foerste verdien imens filmid er andre 
+            # Lager tuppel hvor rating er foerste verdien imens filmid er andre
             minsteTuppel = max(listeOverFilmer)
             minsteVerdi = 10 - minsteTuppel[0]
             minsteId = minsteTuppel[1]
@@ -132,6 +145,8 @@ def kortesteVei(G, fra, til):
     return skrivKortesteVei(G, parents, fra, til)
 
 # Skriver ut korteste vei fra dict parents, og lager utskrivbar strenge fra denne
+
+
 def skrivKortesteVei(G, parents, fra, til):
     V, E, w, idToName, movieIdToName, movieRating = G
 
@@ -164,6 +179,8 @@ def skrivKortesteVei(G, parents, fra, til):
     return strenge
 
 # Returnerer stien mellom "fra" og "til" i en ordbok
+
+
 def bfsShortestPath(G, fra, til):
     _, E, w, idToName, movieIdToName, movieRating = G
     parents = {fra: None}
@@ -186,6 +203,8 @@ def bfsShortestPath(G, fra, til):
     return parents
 
 # Returnerer strengen som skal skrive korteste vei mellom "fra" og "til"
+
+
 def shortestPathBetween(G, fra, til):
     parents = bfsShortestPath(G, fra, til)
     current = parents[til]
@@ -201,7 +220,7 @@ def shortestPathBetween(G, fra, til):
 
         current = parents[skuspillerID]
 
-    linjeData =  path[::-1]
+    linjeData = path[::-1]
 
     strenge = ""
     for linje in linjeData:
@@ -213,20 +232,23 @@ def shortestPathBetween(G, fra, til):
         strenge += skuespillerNavn + "\n" + \
             "===[" + filmNavn + \
             " ( " + movieRating[filmID] + " ) " + "]" + "===> "
-            
+
     strenge += str(idToName[til] + "\n")
 
     return strenge
 
-#metoden gjoer et dybde forst sok, og gaar igjennom alle skuspillere
-#legger alle skuspillere som kan naas fra en node(komponent), i en liste, 
+# metoden gjoer et dybde forst sok, og gaar igjennom alle skuspillere
+# legger alle skuspillere som kan naas fra en node(komponent), i en liste,
 # og legger denne i enda en liste
-#sjekker saa lengden paa alle lister i listen, og mapper storrelsen paa komponenten
-#til antall av storrelsen, og returnerer denne dictionayen
+# sjekker saa lengden paa alle lister i listen, og mapper storrelsen paa komponenten
+# til antall av storrelsen, og returnerer denne dictionayen
+
+
 def komponenter(G):
     V, E, _, _, _, _ = G
 
-    antallAvStorrelse = defaultdict(int) #antallAvStorrelse[storrelse] = antall
+    # antallAvStorrelse[storrelse] = antall
+    antallAvStorrelse = defaultdict(int)
 
     alleKomponenter = []
     alleVisited = set()
@@ -248,15 +270,16 @@ def komponenter(G):
                     alleVisited.add(u)
                     stack.append(u)
         alleKomponenter.append(result)
-    
+
     for komponent in alleKomponenter:
         l = len(komponent)
         antallAvStorrelse[l] += 1
 
-    
     return antallAvStorrelse
 
-#lager en utskrivbar strenge fra dictionary antallAvStorrelse
+# lager en utskrivbar strenge fra dictionary antallAvStorrelse
+
+
 def utskriftKomponenter(G):
 
     antallAvStorrelse = komponenter(G)
@@ -264,22 +287,22 @@ def utskriftKomponenter(G):
     dictionary_items = antallAvStorrelse.items()
 
     sorted_items = sorted(dictionary_items, reverse=True)
-    
+
     strenge = ""
     for storrelseAntall in sorted_items:
         strenge += f"There are {storrelseAntall[1]} components of size {storrelseAntall[0]} \n"
-    
+
     return strenge
 
 
 def main():
-    #Oppgave 1
+    # Oppgave 1
     G = buildgraph()
     print("Oppgave 1: \n")
     print(antallNoder(G))
     print(str(antallKanter(G)) + "\n")
 
-    #Oppgave 2
+    # Oppgave 2
     print("Oppgave 2: \n")
     print(shortestPathBetween(G, 'nm2255973', 'nm0000460'))
     print(shortestPathBetween(G, 'nm0424060', 'nm0000243'))
@@ -287,7 +310,7 @@ def main():
     print(shortestPathBetween(G, 'nm0000288', 'nm0001401'))
     print(shortestPathBetween(G, 'nm0031483', 'nm0931324'))
 
-    #Oppgave 3
+    # Oppgave 3
     print("Oppgave 3: \n")
     print(kortesteVei(G, 'nm2255973', 'nm0000460'))
     print(kortesteVei(G, 'nm0424060', 'nm0000243'))
@@ -295,8 +318,9 @@ def main():
     print(kortesteVei(G, 'nm0000288', 'nm0001401'))
     print(kortesteVei(G, 'nm0031483', 'nm0931324'))
 
-    #oppgave 4
+    # oppgave 4
     print("Oppgave 4: \n")
     print(utskriftKomponenter(G))
+
 
 main()
