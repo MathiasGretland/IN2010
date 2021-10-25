@@ -28,8 +28,6 @@ def merge(minst, storst, array):
 # Input: Et array A med n elementer
 # Output: Et sortert array med de samme n elementene
 # Notasjon: A = array
-
-
 def mergeSort(array):
     n = len(array)
     if n <= 1:
@@ -44,12 +42,7 @@ def mergeSort(array):
 # Partition
 # Input: Et array A med n elementer, low og high er indekser
 # Output: Flytter elementer som er hhv. mindre og større til venstre og høyre enn en gitt index som returneres
-
-
 def partition(A, low, high):
-    # DETTE ER EN DÅRLIG IMPLEMENTASJON! SE PSEUDOKODEN HVORFOR!
-    p = A[len(A)-1]
-    A[p], A[high] = A[high], A[p]
     pivot = A[high]
     left = low
     right = high - 1
@@ -65,7 +58,9 @@ def partition(A, low, high):
     A[left], A[high] = A[high], A[left]
     return left
 
-
+#QuickSort
+#Input: Et array A med n elementer, low og high er indekser
+#Output: Et sortert array med de samme n elementene
 def quickSort(A, low, high):
     if low >= high:
         return A
@@ -74,10 +69,15 @@ def quickSort(A, low, high):
     quickSort(A, p + 1, high)
     return A
 
+#BucketSort
+#Input: Et array A med n elementer
+#Output: Et array med de samme n elementene sortert etter nøkler
+def bucketSort(A):
+    pass
 
 listeMedElementer = [3, 7, 1, 12, 34, 76, 23, 444, 8, 4, 5, 6]
 print(mergeSort(listeMedElementer))
 
-#listeMedElementer = [3, 7, 1, 12, 34, 76, 23, 444, 8, 4, 5, 6]
-listeMedElementer = [3, 2, 1, 9, 11, 0, 7, 10, 8, 4, 5, 6]
+listeMedElementer = [3, 7, 1, 12, 34, 76, 23, 444, 8, 4, 5, 6]
+#listeMedElementer = [3, 7, 1, 9, 11, 0, 2, 10, 8, 4, 5, 6]
 print(quickSort(listeMedElementer, 0, len(listeMedElementer)-1))
