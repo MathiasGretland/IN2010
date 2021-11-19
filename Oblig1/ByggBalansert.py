@@ -10,8 +10,8 @@ for line in sys.stdin:
         break
     sortertInput.append(int(line))
 
-# metoden printer tallet i miden av listen foer den lager nye lister med det til
-# hoyere og venstre for tallet som blir printet,
+# metoden printer tallet i midten av listen foer den lager nye lister med det til
+# hoyre og venstre for tallet som blir printet,
 # og kaller paa metoden rekursivt for de nye listene
 
 
