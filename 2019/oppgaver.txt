@@ -1,0 +1,75 @@
+1a) 11, fordi et spenntre har alltid en kant mindre enn antall noder. Så siden G er en sammenhengende graf med
+12 noder, vil S ha 11 kanter
+
+1b)
+3, VIKTIG! her er det ikke spesifisert at G er sammenhengende, som betyr at den ikke er det, men siden det 
+er 6 kanter, er den nødt til å ha kanter til minimum 4 noder. Da vil spennskogen til G altså F, nødt til å ha en node
+med kanter til 3 andre noder. Altså den trenger en node som har 3 kanter til 3 andre forskjellige noder. Som
+da betyr at den kun trenger 3 kanter for å være spennskogen til G.
+
+1c)
+Prim, Kruskal og Boruvka. Disse finner minimale spenntrer. DFS og BFS finner spenntrær men ikke minimale
+fordi, de ikke tar høyde for vektede grafer.
+
+1d)
+Ja, fordi FEM er i P. Og som vi vet så er alle P i NP 
+
+1f)
+O(n^5)
+
+1h)
+Ingen negative sykler - Bellman-Ford
+Ingen negative kanter - Dijkstra
+Vektet DAG - Topologisk sortering
+Uvektet - BFS
+
+1i)
+GATTACA
+
+1j)
+0   1   2   3   4
+32  40  17  98  59
+Altså: element 40, får plass på indeks 1
+
+
+2a)
+1. Hva utgjør kantene i grafen? Kantene hvilke rom som er naboene til hverandre, altså hvilke rom man kan gå til fra den du er i.
+2. Hva bestemmer utgraden til en node? Antall rom på panelet til noden
+3. Hva er utgraden til et skattkammer? 0, fordi et skattkammer ikke kan gå til noen andre rom
+4. I eksempelverdenen, hva er utgraden til rom D? 1, fordi kun G er på panelet til D
+
+2b)
+Se tegning
+
+2c)
+1. Dette vil alltid kun være 1, og det er skattkammeret, fordi som spesifisert i a) så vil det fra et skattekammer
+ikke være mulig å gå til noen andre noder
+2. Basert på svaret til 1 vet vi at utgraden til Ck vil være 0, da den ikke har noen andre komponenter på panelet sitt
+
+2d)
+Fordi som spesifisert i et av kravene til et skattekammer: Det er mulig å komme seg til k fra alle andre rom i verdenen.
+Dette tilsier at det kun kan være et skattekammer, fordi hvis det for eksempel hadde vært 2, så vil ikke
+det første kravet: Det er ikke mulig å nå noen andre rom fra. Bli oppfylt.
+
+2e)
+fordi kravet for at det skal være et startrom er: Det er mulig å komme seg fra s til alle andre rom i verdenen.
+1. Dette tilsier at det er mulig å gå fra en startnode og komme til en annen, slik at hvis t er i V og at t også er i Cs, vet vi at
+det finnes en kant fra t til s. Noe som betyr at den også fungerer som et startrom siden den kan komme til akkurat de samme rommene som s kan
+2. Som forklart i 1. vil dette også gjelde for hvilket som helst vilkårlig node i Cs. Da alle startnoder har en
+måte å komme til hverandre på
+
+2f)
+Procedure something(G)
+    (V, E) <- G
+
+2h)
+Se tegning for hånd
+
+2i)
+Dette betyr altså at vi må gå fra startnode og gjennom alle nodene, 
+fordi startnoden har ingen som peker til seg, og skattekammeret peker til ingen node, som betyr at den er nødt til å gå igjennom alle nodene
+for å komme til det skattekammeret, da ingen noder kan føre til to forskjellige noder.
+Vi vet dermed at G er en rettet asyklisk graf (DAG), slik at ved bruk av Topologisk sortering gjør at vi kan 
+finne korteste vei i lineær tid.
+
+3
