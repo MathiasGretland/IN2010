@@ -1,0 +1,66 @@
+Binære søketrær
+
+a) Node C
+b) Node 5
+c) Nei
+d) Ja
+
+Grafegenskaper
+- Allerede sammenhengende
+- Fjerne kanter
+- Fjerne kanter
+- Den er Allerede ikke et tre
+
+- Den er Allerede en DAG, fordi det ikke finnes noen sykler
+- Legge til kanter
+- Legge til kanter
+- Den er Allerede ikke sterkt sammenhengende
+
+Subanagram
+a) O(w * s)
+
+b) 
+Procedure IsSubanagramOf2(W,S): -- Er W et Subanagram av strengen S?
+    Fw <- FreqTable(W) -- vil se slik ut hvis W er: "algh" {"a": 1, "l": 1, "g": 1, "h": 1}
+    Fs <- FreqTable(s) -- vil se slik ut hvis S er: "aghilmort" {"a": 1, "g": 1, "h": 1, "i": 1, "l": 1, "m": 1, "o": 1, "r": 1, "t": 1}
+    for c in W do -- Går igjennom hver bokstav i strengen "algh"
+        if Fw.get(c) > fs.get(c) then -- Dermed viss Subanagramet har flere forekomster av en bokstav enn strengen 
+                                        , så vil det ikke være et Subanagram, husk! her er det kun false viss den er
+                                        større, altså har de like mange forekomster blir det fortsatt true, siden 1 > 1 ikke er sant
+            return False
+    return True -- Returnerer True hvis det ikke er flere forekomster av en bokstav i W, enn det er i S
+
+c) XD
+
+d) BUCKET SORT!
+
+
+Fire typer grafer
+a) 
+Input: En graf G og et array av noder C
+Output: Returner JA hvis C viser at G er av type 2, NEI ellers
+Procedure Type2Verifier(G, C)
+    (V, E) <- G
+    N <- |C|
+    for i <- 0 to N - 1 do
+        if (C[i], C[(i+1) mod N]) not in E then
+            return NEI
+    return JA
+
+b)
+Type2Verifier kjører i polynomiell tid, det betyr at JA-instanser av Type2 verifiseres i polynomiell tid.
+Som er kravet for å være i NP
+
+c) 
+Hvis grafen inneholder en hamiltonsk sykel kan alle noder nå alle andre på minst to måter. Dette er ved å
+følge sykelen «den ene eller den andre» veien. Her bruker vi at grafen er urettet.
+
+d) 
+Input: En graf G, to noder s og t og et sertifikat C
+Output: Skriver ut to distinkte stier fra s til t
+Procedure TwoPaths(G, C, s, t)
+    (V, E) <- G
+    
+
+
+
