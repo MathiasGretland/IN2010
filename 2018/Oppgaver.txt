@@ -1,0 +1,215 @@
+1.
+// kodebit (i)
+for (int i = 1; i <= 8; i++) {
+// Gjør noe
+}
+
+Worst case: Siden for loopen kun kjører opp til 8, og er derfor uavhengig av n,
+så vil worst case være O(1). Men det som egentlig har noe å si er hva som skjer inne i // Gjør noe,
+Basert på hva som skjer her vil være den totale tidskompleksiteten. ! dette er viktig å påpeke under eksamen
+
+// kodebit (ii)
+for (int i = 1; i <= n; i++) { // Kjører O(n)
+    for (int j = 1; j <= n; j++) { // Kjører O(n)
+        sum++;
+    }
+}
+
+Worst case: Her er det en standard ytre og indre for loop som kjører i O(n) hver, derfor 
+blir worst case O(n^2)
+
+// kodebit (iii)
+for (int i = 1; i <= 2*n; i++) {  // spiller ingen rolle om i <= n, eller i <= 2*n. Det blir fortsatt O(n)
+    for (int j = 1; j <= i; j++) { // i kan max kjøre n ganger, derfor kan j max kjøre i ganger, men siden i = n, så blir det O(n)
+        teller++;
+    }
+}
+
+Worst case: Her spiller det ingen rolle om den kjører til n eller 2*n, det blir fortsatt O(n).
+Og her siden i max kan være like stor som n, så kan j det også og det blir også derfor O(n).
+Som da gir oss en worst case på O(n^2)
+
+// kodebit (iv)
+for (int i = 1; i <= n; i++) {  O(n)
+    for (int j = 1; j <= i; j++) { O(n)
+        for (int k = 1; k <= i+j; k++) { O(i + j) = O(n + n) = O(n)
+            resultat += i*j;
+        }
+    }
+}
+
+Worst case: O(n^3)
+
+
+3. 
+# Skriver i pseudokode, pga det vi skal gjøre på eksamen, men denne Java klassen var en del av programmet
+Class Node {
+    Node l, r;
+    int v;
+}
+Input: En node n, en verdi og en streng som holder på utskriften
+Output: En tekststreng som beskriver stien til verdien i treet
+Procedure writePathToNode(n, verdi, strengSaaLangt)
+    if n == null:
+        print("Verdien " + verdi + " finnes ikke i treet")
+    if n.v == verdi:
+        print(strengSaaLangt + " " + verdi)
+    if n.v < verdi:
+        strengSaaLangt += "R"
+        writePathToNode(n.r, verdi, strengSaaLangt)
+    else: // Hvor n.v > verdi
+        strengSaaLangt += "L"
+        writePathToNode(n.l, verdi, strengSaaLangt)
+
+4. 
+#Samme node klasse som fra forrige oppgave
+Class Node {
+    Node l, r;
+    int v;
+}
+Input: En node n og en verdi value
+Output: Et binært søketre hvor alle verdiene som er mindre enn value er borte
+Procedure removeLessThan(n, value)
+    if n == null: // base case
+        return null
+    if n.v >= value:
+        if n.l.v < value:
+            removeLessThan(n.l, value)
+        return n 
+    if n.v < value:
+        return removeLessThan(n.r, value)
+
+#5
+Her vil jeg naturligvis bruke åpen hashing, nærmere sagt seperate chaining. 
+Fordi her har vi en hashtabell med lengde 11, når vi skal sette inn 12 elementer.
+Hadde vi da brukt lukket hashing, nærmere sagt lineær probing så ville det siste elemntet ikke fått plass
+I dette tilfellet er det 91. Men ved bruken av seperate chaining vil ikke dette være et problem.
+
+0: 99, 33
+1: 78, 12
+2: 57
+3: 91
+4:
+5:
+6: 61
+7: 18
+8: 74, 19
+9: 42, 20
+10:
+
+
+#6
+#Oppgaven sier vi har tilgang til hashTable
+Input: Et element e
+Output: True eller False basert på om elementet ble satt inn eller ikke
+Procedure put(e)
+    teller = 0
+    n = hashTable.length
+    i = e.k % n 
+    While teller != n:
+        if hashTable.get(i) == null or hashTable.get(i) == e: // Hvis det er ledig plass, eller elementet lå der fra før
+            hashTable[i] = e
+            return True
+        if hashTable[i].get() != null // Hvis det ligger noe der fra før som ikke er elementet
+            if (i + 1) != n: // passer på at vi ikke går ut av listen og får index out of bounds
+                i = i + 1
+                teller += 1 // telleren øker slik at den max kan kjøre n ganger
+            else:
+                i = 0 // Vis vi er på slutten av lista så starter vi på index 0 igjen
+                teller += 1
+    return False
+
+#En annen måte å gjøre det på
+def put(e):
+    teller = 0
+    n = len(hashTable)
+    tall = e.k % n 
+    while teller != n: # Så lenge telleren ikke går over lengden til hashTabellen så kan den kjøre, går den over så betyr det at tabellen er full 
+        if tall < n: #Passer på at indexen ikke går ut av tabellen slik at det blir index out of bounds
+            if hashTable.get(tall) == None: #viss det er ledig plass
+                hashTable[tall] = e.element
+                return True
+            else: #hvis det ikke er ledig plass, så skal den prøve neste plass
+                tall += 1
+                teller += 1
+        else: #viss vi er på slutten av tabellen altså index n - 1, så skal vi starte på nytt. Altså sette index til = 0
+            tall = 0
+            teller += 1
+    return False
+
+#7
+Dette arrayet er ikke en heap, dette er hverken en min eller en max heap.
+Hvis det skulle vært en min heap så ville roten vært det minste elementet i arrayet, samt at
+alle etterkommere av roten måtte vært større. Dette tilsier at alle foreldre noder er nødt til å være mindre enn barna sine.
+
+Skulle det vært en max heap så er det omvendt fra min heap, der roten er det største elementet i arrayet.
+Og alle etterkommere av roten er mindre. Noe som igjen tilsier at alle foreldre noder er nødt til å våre større enn barna sine.
+
+#8
+Se PNG
+
+#9
+Se PNG
+
+#10
+a)
+Node        Kjent     Avstand           Sti
+A           Y           0               - 
+B           Y           2               A
+C           Y           5               A
+D           Y           10              B
+E           Y           24/13           B/D
+F           Y           20/13           A/G
+G           Y           9               C
+H           Y           21/17/14        G/E/F
+
+b)
+Nei. For å bregne den riktig må vi bryte invarianten. Dijkstras algoritmen endrer ikke en node som er
+kjent og antar at en bedre sti fra startnoden til en behandlet node v ikke vil bli funnet i fremtiden. Vi
+må derimot bryte invarianten siden etter at v er kjent (f.eks E med avstand 7 fra A-B-E), kan det
+finnes en negativ kant til v som gir en sti med kortere vei (f.eks E med avstand 3 fra A-B-D-E).
+
+
+#11
+#Vi antar vi har en slik klasse
+class Graph {
+    private int V; // No. of vertices
+    // an array of linked lists
+    private LinkedList<Integer> adj[]; //Adjacency List (nabo-liste)
+
+    // Constructor
+    Graph(int v){
+        V = v;
+        adj = new LinkedList[v];
+        for (int i=0; i<v; ++i)
+            adj[i] = new LinkedList();
+    }
+
+    // Function to add an edge into the graph
+    void addEdge(int v,int w){
+        adj[v].add(w);
+        adj[w].add(v);
+    }
+    
+    // Returns true if the graph is a tree, else false.
+    boolean isTree()
+    {… }
+    …
+}
+Input: Tar inn en graf
+Output: Returnerer True eller False basert på om den urettede grafen er et tre eller ikke
+Procedure isTree(G)
+    (V, E) = G
+    venstreBarn = 2*i + 1
+    hoyreBarn = 2*i + 2 
+    for each node n in V:
+        if n.v != (|V|/2)
+            if E has an edge where (V[(n.v + venstreBarn], V[(n.v + hoyreBarn]) and E has an edge where (V[(n.v + hoyreBarn], V[(n.v + venstreBarn])
+                continue
+            else:
+                return False
+    return True
+
+DETTE BLIR FEIL! FORDI HER SJEKKER DU OM DET ER ET BINÆRT SØKETRE
+
+

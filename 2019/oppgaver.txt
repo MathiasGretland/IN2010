@@ -72,4 +72,27 @@ for å komme til det skattekammeret, da ingen noder kan føre til to forskjellig
 Vi vet dermed at G er en rettet asyklisk graf (DAG), slik at ved bruk av Topologisk sortering gjør at vi kan 
 finne korteste vei i lineær tid.
 
-3
+3a)
+xd
+
+3b)
+xd
+
+3c)
+17, 11, 43, 98, 43, 56
+
+3d)
+				11
+		17			56
+	43		43	98
+11, 17, 56, 43, 43, 98
+
+3e)
+For at et Binærtre skal være en minimumsheap, så er roten nødt til å være det minste elementet i lista
+og foreldrenodene skal alltid være mindre enn eller lik barna sine
+
+Strukturkrav: En (binær) heap er et komplett binærtre. På dypeste nivå er alle nodene til venstre. Ingen node har en
+nullpeker til venstre for seg. Når nodene ligger i en array (uten ’hull’) er dette kravet tilfredsstilt.
+
+3f)
+
