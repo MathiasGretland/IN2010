@@ -556,10 +556,313 @@ Se videoen her, ingen pseudokode, men er tankegangen som gjelder.
 """
 
 
+
+
 """
-Note til imorgen!
-Se på bellman-Ford algoritmen! Den funker på rettete grafer, finner kortest sti eller oppdager negative sykler ved noen smarte triks
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 """
+
+
+
+"""
+Sorteringsmetoder! Starter med de basice, med basic så mener jeg de som ikke er så kompliserte, det går da utover kjøretidskompleksiteten:
+Bubble sort O(n^2) Kvadratisk
+Selection sort O(n^2) Kvadratisk 
+Insertion sort O(n^2) Kvadratisk 
+"""
+
+"""
+Pseudokode av BubbleSort
+------------------------------------------------------------------------
+Input: Et array A med n elementer
+Output: Et sortert array med de sammme elementene
+Procedure BubbleSort(A)
+    for i from 0 to n - 2 do:
+        for j from 0 to n - 1 do:
+            if A[j] > A[j+1] do: //Hvis den til venstre er større enn den som er til høyre for den, så skal de bytte plass
+                A[j], A[j+1] = A[j+1], A[j]
+        end
+    end
+
+
+
+Merk! denne varianten ikke er optimalisert, her kan man bryte ut av den ytre loopen, dersom ingen i den indre loopen ikke gjør noen bytter
+Fordi hvis man går igjennom en hel runde uten å gjøre noen bytter, så betyr det at det ikke er noen flere bytter igjen å gjøre. 
+MEN! merk at den optimaliserte varianten som er beskrevet over ikke gjør noe for kjøretidskompleksiteten, så er ikke så nøye, men viktig å merke seg.
+
+
+Kompleksitet:
+O(n^2)
+"""
+
+"""
+Ideen bak SelectionSort
+    - Finne det minste i resten og plassere det først
+    - litt mer presist:
+        1. La i være 0
+        2. Finn hvor det minste elementet fra i og utover ligger
+        3. Bytt ut elementet på plass i med det minste (hvis nødvendig)
+        4. Øk i og gå til 2. frem til i når størrelsen av arrayet
+
+Pseudokode av SelectionSort
+----------------------------------------------------------------------------
+Input: Et array A med n elementer
+Output: Et sortert array med de samme n elementene
+Procedure SelectionSort(A): 
+    for i from 0 to n - 1 do:
+        k = i
+        for j from i + 1 to n - 1 do:
+            if A[j] < A[k] then
+                k = j
+        end
+        if i is not k then:
+            A[i], A[k] = A[k], A[i]
+    end
+
+
+MERK! Her kan vi ikke bryte ut av den ytre loopen tidlig slik vi kunne med bubble sort
+
+Kompleksitet:
+O(n^2)
+MEN! likevel er den som regel raskere enn bubble sort!
+Fordi den vil maksimalt gjøre n-1 bytter!, å bytte om to verdier i et array er forholdsvis dyrt, noe som vi ikke gjør her, vi bare holder på verdien og bytter kun når vi har gått igjennom hele
+Så derfor vil selection sort som regel være raskere enn bubble sort, fordi bubble sort bytter hver gang den finner en som er mindre.
+"""
+
+
+
+"""
+Ideen bak Insertion Sort er å plassere alle elementene sortert inn i en liste.
+BLIR SOM NÅR DU SORTERER KORT!
+Vi lar alt til venstre for en gitt posisjon i være sortert.
+Litt mer presist skal vi
+    1. La i være 1
+    2. Dra det i-te elementet mot venstre som ved sortert innsetting
+    3. Øk i og gå til 2. frem til i når størrelsen av arrayet.
+
+
+Pseudokode av InsertionSort
+----------------------------------------------------------------------------
+Input: Et array A med n elementer
+Output: Et sortert array med de samme n elementene
+Procedure InsertionSort(A):
+    for i from 1 to n - 1 do:
+        j = i
+        while j > 0 and A[j-1] > A[j] do:
+            A[j-1], A[j] = A[j], A[j-1]
+            j = j - 1
+        end
+    end
+
+
+Kompleksitet:
+O(n^2)
+
+Men! merk at insertion sort "ofte" bryter ut av den indre loopen
+Den er derfor spesielt rask på "nesten sorterte" arrayer
+Dette gjør at den er blant de raskeste algoritmene for små arrayer
+
+"""
+
+
+
+
+"""
+Ideen bak HeapSort er å bygge en heap og poppe elementene av heapen
+HUSK!En heap kan implementeres med et array, noe som gjør at gjør arrayet om til en heap
+Litt mer presist skal vi
+    1. Gjør arrayet om til en max-heap
+    2. La i være n - 1 der n er størrelsen på arrayet
+    3. Pop fra max-heapen og plasser elementet på plass i 
+    4. Senk i og gå til 3. frem til i blir 0
+
+Vi trenger dermed å bygge en max-heap
+Husk! En max-heap er en heap der hver node er større enn begge barna. Altså ser man nedover så er det kun noder som er mindre enn seg, ser man oppover er det kun noder som er større enn seg.
+En node svarer til en posisjon i arrayet
+    - Der roten ligger på plass 0
+    - Venstre barn ligger på plass 2i + 1
+    - Høyre barn ligger på plass 2i + 2
+BuildMaxHeap gjør et array om til en max-heap
+
+Starter med å lage en hjelpeprosedyre for å bygge en max-heap
+Input: En (uferdig) heap A med n elementer der i er roten
+Output: En mindr uferdig heap
+Procedure BubbleDown(A,i,n):
+    largest = i
+    left = 2*i + 1
+    right = 2*i + 2
+
+    if left < n and A[largest] < A[left] then: //left < n, indikerer om den har et venstre barn. Hvis venstre barnet er større så må de bytte plass
+        largest, left = left, largest //Se at de ikke bytter plass i selve arrayet, det gjøres helt til slutt, her tar vi bare vare på index
+
+    if right < n and A[largest] < A[right] then:
+        largest, right = right, largest
+    
+    if i is not largest then: //Først her skjer bytte i selve arrayet
+        A[i], A[largest] = A[largest], A[i]
+        BubbleDown(A, largest, n) //Så kaller vi rekursivt fra largest, altså enten høyre eller venstre barn
+
+Derfor trenger vi en metode som bygger max-heapen, fordi som vi vet er i nødt til å starte fra n/2, altså halvparten av arrayet sin lengde
+
+Input: Et array A med n elementer
+Output: A som en max-heap
+Procedure BuildMaxHeap(A, n):
+    for i from [n/2] down to 0 do:
+        BubbleDown(A, i, n) //Dette vil gjøre at den starter på midten og pushe den oppover helt til det største tallet kommer til roten
+
+Nå blir heapsort veldig enkel
+
+Input: Et array A med n elementer
+Output: Et sortert array med de samme n elementene
+Procedure HeapSort(A)
+    BuildMaxHeap(A)
+    n = A.length
+    for i from n - 1 down to 0 do:
+        A[0], A[i] = A[i], A[0]
+        BubbleDown(A, 0, i)
+    end
+
+
+Kompleksitet: 
+O(n log(n))
+"""
+
+
+"""
+Nå kommer de litt vanskeligere SorteringsAlgoritmene, disse er mer komplekse, men det gjør jo selvfølgelig at de er raskere.
+Vi har dermed først ut Merge Sort
+
+Ideen bak Merge Sort er å splitte arrayet i to ca. like store deler (ca. fordi noen ganger så får du oddetall)
+    - Sortere de to mindre arrayene
+    - Så flette (eller "merge") de to sorterte arrayene sammen
+
+Litt mer presist:
+    - La n angi størrelsen på arrayet A
+    - Hvis n <= 1, returner A
+    - La i = [n/2]
+    - Splitt arrayet i to deler A[0..i-1] og A[i...n-1]
+    - Anvend merge sort rekursivt på A[0...i-1] og A[i...n-1]
+    - Flett sammen A[0...i-1] og A[i...n-1] sortert
+
+Vi starter da med merge metoden, som sorterer to arrayer sammen, til en array
+Input: To sorterte arrayer A1, og A2 og et array A, der |A1| + |A2| = n
+Output: Et sortert array A med elementene fra A1 og A2
+Procedure Merge(A1, A2, A):
+    i = 0
+    j = 0
+
+    while i < |A1| and j < |A2| do:
+        if A1[i] < A2[j] then:
+            A[i + j] = A1[i]
+            i = i + 1
+        else:
+            A[i + j] = A2[j]
+            j = j + 1 
+        end
+    end
+
+    //Nedenfor nå så må vi "tømme" ut resten, dette vil skje når det vil være oddetall antall noder i arrayet
+    while i < |A1| do:
+        A[i + j] = A1[i]
+        i = i + 1
+    end
+
+    while j < |A2| do:
+        A[i + j] = A2[j]
+        j = j + 1
+    end
+
+    return A
+
+Nå til den faktiske metoden:
+
+Input: Et array A med n elementer
+Output: Et sortert array med de samme n elementene
+Procedure MergeSort(A)
+    n = A.length
+    if n <= 1 then: //Hvis den kun har et element så trenger vi ikke sortere noe
+        return A
+    i = n/2
+    A1 = MergeSort(A[0...i-1]) //Dette tar første halvdel av lista
+    A2 = MergeSort(A[i...n-1]) //Dette tar andre halvdel av lista
+    return Merge(A1, A2, A)
+
+Kompleksitet:
+O(n log(n))
+
+"""
+
+
+
+"""
+QuickSort time! 
+Ideen bak Quicksort er å velge et element, så 
+    - Samle alt som er mindre enn elementet til venstre for det
+    - Samle alt som er større enn elementet til høyre for det
+Litt mer presist:
+    - Vi velger en 0 <= i < n som kalles pivot elementet
+        - Søk fra venstre mot høyre etter et element som er større enn A[i]
+        - Søk fra høyre mot venstre etter et element som er mindre enn A[i]
+        - Bytt plass på disse, og søk etter nye som kan byttes
+        - Avslutt når høyre og venstre søkene krysser
+    - Fortsett rekursivt på alle som er hhv. til venstre og høyre for pivot
+
+Finne pivot er den viktigste faktoren når det kommer til kjøretiden av Quicksort,
+For at den skal være mest effektiv så er den beste strategien å velge en tilfeldig fra arrayet.
+MERK! Hvis man velger den første eller den siste elementet i et array som pivot så vil man automatisk få worst case hvis arrayet er sortert. 
+Siden vi skriver pseudokode så bare antar vi at vi har en funksjon som heter ChoosePivot, som har valgt pivot etter en rimelig strategi
+
+
+Pseudokode for partisjonering 
+-------------------------------------------------------------------------
+Input: Et array A med n elementer, low og high er indekser
+Output: Flytter elementer som er hhv. mindre og større til venstre og høyre enn gitt index som returneres
+Procedure Partition(A, low, high):
+    p = ChoosePivot(A, low, high)
+    A[p], A[high] = A[high], A[p]
+    pivot = A[high]
+    left = low
+    right = high - 1 //Tar - 1, fordi vi passer på at vi ikke bytter på pivot elementet som vi putter bakerst i lista
+
+    while left <= right do:
+        while left <= right and A[left] <= pivot do:
+            left = left + 1
+        end
+        while right >= left and A[right] >= pivot do:
+            right = right + 1
+        end
+        if left < right then:
+            A[left], A[right] = A[right], A[left]
+    end
+    A[left], A[high] = A[high], A[left]
+    return left
+
+
+Så nå over til den egentlige metoden
+
+Input: Et array A med n elementer, low og high er indekser
+Output: Et sortert array med de samme n elementene
+Procedure Quicksort(A, low, high):
+    if low >= high then:
+        return A
+    p = Partition(A, low, high)
+    Quicksort(A, low, p - 1)
+    Quicksort(A, p + 1, high)
+    return A
+
+
+Kompleksitet:
+I worst case så vil vi få O(n^2), og dette vil skje når vi velger første element som pivot på et array som allerede er sortert, fordi da må den gå igjennom absolutt alle sammen.
+Men i beste tilfelle er p midt mellom low og high, og da halverer vi arbeidet for hvert rekursive kall, som dermed gir O(n log(n))
+HUSK! Det skjer veldig sjeldent og dermed vil Quicksort som regel være raskere enn både merge sort og heapsort
+"""
+
+
+"""
+Se Bucket sort og Radix
+"""
+
+
 
 
 
