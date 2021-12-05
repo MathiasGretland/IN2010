@@ -113,6 +113,60 @@ Men her er vi nødt til å mappe foreldrene til de ulike nodene, og basert på d
 Som igjen gjør at vi kan lese ut den korteste stien fra s til alle andre noder
 """
 
+
+"""
+Topologisk sortering! En graf kan beskrive avhengigheter mellom ting, f.eks. temporale avhengigheter
+rettede, asykliske grafer (directed acyclic graphs, DAG)
+kan være nyttig å kunne ordne nodene etter avhengighetene
+
+Ideen:
+    - Fjern alle noder som ikke har avhengigheter, slik vil det oppstå noder som igjen ikke har avhengigheter, helt til det er ingen igjen.
+    - Dette vil da lage en rekkefølge, som forklarer hva vi er nødt til å gjøre før vi kan gjøre noe annet, se morgenrutine eksempelet fra videoen.
+
+"""
+
+"""
+Pseudokode av Topologisk sortering
+--------------------------------
+Input: En graf G med n noder
+Output: En topologisk ordning av nodene i G, eller G har en sykel
+Procedure TopologiskSortering(G):
+    Initialize S as empty Stack
+    for each vertex v in G do: //Sjekker for alle nodene i grafen om de har noen avhengigheter eller ikke
+        inCount(v) = degin(V) //Denne er litt yikes, men den ser på hvor mange avhengigheter noden har. !!! inCount betyr hvor mange kanter den har som peker mot seg!
+        if inCount(v) = 0 then: //Hvis noden ikke har noen avhengigheter, så skal den pushes på stacken
+            S.push(v)
+    i = 1
+    while S not empty do:
+        v = S.pop() //Tar ut elementet i stacken
+        output[i] = v //Angir hvilken rekkefølge vi skal utføre handlingene i
+        i = i + 1  //Dette gjør jo at alle får forskjellig tall, som tilsier hvilken rekkefølge de skal gjøre ting i, f.eks. 1 = dusje, 2 = undertøy, 3 = bukse. osv...
+        for each edge (v, w) in G do: //Her går vi da videre fra vår node, gjennom en kant, til en ny node w
+            inCount(w) = inCount(w)-1 //Og siden de andre nodene nå er "fjernet" så vil jo barna til de forrige nodene uten avhengigheter, være de som ikke har avhengigheter
+            if inCount(w) = 0 then: //Dette vil jo da gjøre helt til det ikke finnes noen noder igjen, fordi så lenge det finnes noder uten avhengigheter, så vil det alltid være noder på stacken
+                S.push(w)
+    if i > n then: //Hvis i har et større tall en antall noder i grafen, så vil vi ha en sykel.
+        return output
+    return "G has a cycle"
+
+Hvorfor finner den sykler?
+i blir inkrementert hver gang noe blir poppet fra S
+En node kommer på stacken når alle sine forgjengere har blitt fjernet fra stacken
+Hvis i <= n og S er tom, er det noder som er avhengig av hverandre, som betyr at det er en sykel.
+
+
+
+Kjøretid:
+O(|V| + |E|) = altså: alle nodene + alle kantene
+"""
+
+
+
+
+
+
+
+
 """
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 """
@@ -177,9 +231,53 @@ Procedure Dijkstra(G, s):
 Kjøretid:
 O(|E| log(|V|)) som tilsier O(n log(n))
 """
+"""
+VIKTIG TIL DIJKSTRA! Grådig fungerer ikke alltid, med negative kanter må vi besøke den samme noden og revurdere avstanden flere ganger!
+Dette vil ikke fungere i praksis, og vi bruker derfor Bellman-Ford istedenfor
+"""
+
 
 """
-----------------------------------------------------------------------------------------------------------------------------------------------
+Bellman-Ford algoritmen! Finner korteste stier i grafer med negative kanter. Hvis grafen inneholder en negativ sykel (der summen av vektene er negativ), finnes det ingen kortest sti i den
+Bellman Ford finner kortest sti, eller oppdager negative sykler ved noen smarte triks. 
+VIKTIG! Husk at hvis en graf har en negativ sykel, så betyr det at den kan gå rundt i det uendelige og alltid finne en kortere vei, men i praksis så blir jo ikke det riktig.
+
+Ideen:
+    - Den lengste stien som ikke er en sykel inneholer |V| - 1 kanter. 
+    - Her bruker vi ikke en prioritetskø, oppdaterer heller estimert avstand D for alle noder |V| -1 ganger.
+    - Hvis det finnes en node hvor estimert avstand fortsatt blir mindre etter det, inneholder G en negativ sykel.
+"""
+
+"""
+Pseudokode av Bellman-Ford
+--------------------------------
+Input: En graf G og en start node s
+Output: Korteste stier til hver enkelt node fra s
+Procedure Dijkstra(G, s):
+    Initialize D as empty map
+    for each vertex u in G do:
+        D[u] = infinity #altså uendlig
+    D[s] = 0 //Dette er start noden vår
+    for i from 1 to |V| - 1 do:
+        for edge (u, v) in G do:
+            if D[u] + w((u,v)) < D[v] then:
+                D[v] = D[u] + w(u, v)
+    for edge (u, v) in G do: //Her sjekker den om den klarer å finne et bedre estimat, altså at hvis den går en videre, og stien koster mindre, har vi en negativ sykel
+        if D[u] + w((u, v)) < D[v] then
+            return "G has a negative cycle"
+    
+    return D
+
+
+Kjøretid:
+O(|E| * |V|) som tilsier O(n^2)
+"""
+
+
+
+
+"""
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 """
 
 
@@ -251,7 +349,7 @@ Procedure Prim(G):
         (s, e) = Q.removeMin()
         add s and e to T
         //check neighbors of s in Q
-        for edge a = (s, z) with z in Q do: //Går igjennom naboene til s, altså kantene mellom s og andre noder1
+        for edge a = (s, z) with z in Q do: //Går igjennom naboene til s, altså kantene mellom s og andre noder
             if w(a) < D[z] then: //Hvis vekten til den kanten er mindre enn den som allerede allerede er på heapen så skal den byttes
                 D[z] = w(a)
                 change entry of z in Q to ((z,a), D[z]) //Endrer hvilken vei vi skal komme til den nye noden på heapen fordi vi har funnet en enklere vei
@@ -458,6 +556,10 @@ Se videoen her, ingen pseudokode, men er tankegangen som gjelder.
 """
 
 
+"""
+Note til imorgen!
+Se på bellman-Ford algoritmen! Den funker på rettete grafer, finner kortest sti eller oppdager negative sykler ved noen smarte triks
+"""
 
 
 
