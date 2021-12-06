@@ -253,7 +253,7 @@ Pseudokode av Bellman-Ford
 --------------------------------
 Input: En graf G og en start node s
 Output: Korteste stier til hver enkelt node fra s
-Procedure Dijkstra(G, s):
+Procedure Bellman-Ford(G, s):
     Initialize D as empty map
     for each vertex u in G do:
         D[u] = infinity #altså uendlig
@@ -495,7 +495,7 @@ En graf G er 2-sammenhengende/biconnected, hvis G forblir sammenhengende ved fje
 Formulert på en annen måte: hvis alle par av noder u og v har to distinkte stier (deler ingen kanter eller noder) mellom dem
 MED ANDRE ORD! Det er en sammenhengende graf hvor uansett hvilken node du fjerner så vil den forsatt være sammenhengende, det er først når det fjernes 2 noder
 den ikke er sammenhengende lenger
-Nodene som ved fjerning føret til at grafen blir ikke-sammenhengende heter separasjonsnoder.
+Nodene som ved fjerning fører til at grafen blir ikke-sammenhengende heter separasjonsnoder.
 
 Dermed: Hvordan sjekke om en graf inneholder separasjonsnoder?
 Vi bruker hopcroft-Tarjan algoritmen, som basically er en DFS søk, hvor man oppdaterer indeks og low nummeret til hver node underveis.
@@ -509,13 +509,13 @@ Procedure HopcroftTarjan(G, u, depth):
     visited[u] = true
     low[u] = index[u] = depth
     childCount = 0
-    for each edge {u,v} in G do:
+    for each edge (u,v) in G do:
         if visited[v] = false then:
             childCount = childCount + 1
             HopcroftTarjan(G, v, depth+1)
             low[u] = min(low[u], low[v])
             if index[u] != 1 then: //Sier bascially at hvis u ikke er rotnoden vår.
-                if index[u] <= low[v] then: //Sjekker om indexen er mindre eller lik en etterfølger, hvis den er det, så er det en rotnode
+                if index[u] <= low[v] then: //Sjekker om indexen er mindre eller lik en etterfølger, hvis den er det, så er det en separasjonsnode
                     sep_vertices.add(u)
         else: //Denne sier at vi har en back-edge, og hver gang vi har en back-edge, så må vi fortsatt sjekke om low nummeret vårt stemmer, for hvis neste index er lavere enn det lownummeret vi hadde før, så må vi oppdatere
             low[u] = min(low[u], index[v])
@@ -855,6 +855,59 @@ Kompleksitet:
 I worst case så vil vi få O(n^2), og dette vil skje når vi velger første element som pivot på et array som allerede er sortert, fordi da må den gå igjennom absolutt alle sammen.
 Men i beste tilfelle er p midt mellom low og high, og da halverer vi arbeidet for hvert rekursive kall, som dermed gir O(n log(n))
 HUSK! Det skjer veldig sjeldent og dermed vil Quicksort som regel være raskere enn både merge sort og heapsort
+"""
+
+"""
+Alle sorteringsalgoritmene over har vært basert på sammenligning, 
+og slike sorteringsalgoritmer kan ikke bli bedre enn O(n log(n))!
+
+Hvis vi vet mer om verdiene som skal sorteres, kan vi få til noe bedre
+Og det er nettopp derfor Lars og gjengen liker bucket sort så mye
+
+Bucket Sort går utpå å lage N bøtter
+    - Hvor hver bøtte svarer til en kategori eller sort
+    - Og kategoriene er ordnet
+Elementene vi skal sortere har en kategori, som vi kaller nøkkelen
+I bucket sort plasseres vi hvert element i riktig bøtte
+    - Basert på nøkkelen
+Så løper vi gjennom hver bøtte
+    - Plasserer elementene tilbake i arrayet
+-- Merk at man noen ganger ønsker å sortere bøttene hver for seg, MEN! merk at vi kun fokuserer på hvordan vi implementerer den enkelt
+    -- De lærde virker til å strides på dette punktet
+
+"""
+
+"""
+Pseudokode for Bucket Sort
+----------------------------------------------------------
+Input: Et array A med n elementer
+Output: Et array med de samme n elementene sortert etter nøkler
+Procedure BucketSort(A):
+    La B være et array med N tomme lister
+    n = A.length
+    for i from 0 to n-1 Do:
+        La k være nøkkelen assosiert med A[i]
+        Legg til A[i] på slutten av listen B[k]
+    end
+    j = 0
+    for k from 0 to N - 1 do:
+        for hver x i listen B[k] do:
+            A[j] = x
+            j = j + 1
+        end
+    end
+
+
+Viktig note til kompleksitet:
+Hvis N er liten er dette strålende! Eller en rimelig størrelse.
+Dette vil oftest være en meget effektiv sorteringsalgoritme for tall mellom 0 og 100,
+men hvis man gjør det for absolutt alle heltall, så kan tallet bli veldig stort, som betyr at vi må lage så mange bøtter også
+Noe som vil ta voldsomt mye plass, og det er dermed ikke så lurt å bruke bucket sort.
+
+Så dersom man har små og veldefinerte kategorier så vil bucket sort være best.
+
+Kompleksitet:
+O(N + n)
 """
 
 
