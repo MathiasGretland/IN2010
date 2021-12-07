@@ -1,0 +1,121 @@
+Input: rotnode v og verdi vi skal sette inn x
+Output: noden som blir satt inn
+Procedure settInn(v, x).
+	if v is null:
+		sett inn v som x
+	if v.data < x do:
+		v.right = settInn(v.right, x)
+	if v.data > x do:
+		v.left = settInn(v.left, x)
+	return v
+
+//VIKTIG! Husk at du skal returnere rotnoden, så når du setter inn til høyre eller venstre så skal du ikke returnere den noden, fordi da får du ikke med hele treet
+
+Input: Rotnode v og verdi vi skal finne x
+Output: Noden som vi fant 
+Procedure search(v, x):
+	if v is null:
+		return null
+	if v.data = x:
+		return v
+	if v.data < x do:
+		return search(v.right, x)
+	if v.data > x do:
+		return search(v.left, x)	
+
+Input: en node v og et element x
+Output: Dersom x forekommer i en node u som en etterkommer av v, fjern u
+//Passe på at barna til noden som slettes ikke fjernes
+Procedure Remove(v, x):
+	if v is null:
+		return null
+	if v.data < x do:
+		
+
+
+Procedure VenstreRotasjon(z):
+	y = z.right
+	t1 = y.left
+	
+	z.right = t1
+	y.left = z
+
+	//Oppdatere høyden
+	z.height = 1 + max(height(z.left), height(z.right))
+	y.height = 1 + max(height(z.left), height(z.right))
+
+	return y
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Procedure HøyreRotasjon(z):
+	y = z.left
+	t1 = y.right
+	
+	y.right = z
+	z.left = t1
+
+	z.height = 1 + max(height(z.right), height(z.left))
+	y.height = 1 + max(height(z.right), height(z.left))
+
+	return y
+
+
+
+
+
+
+Procedure fjernAlleUnder(v, x):
+	if v is null:
+		return null
+	if v.data = x do:
+		remove v.left
+	if v.data < x do:
+		return fjernAlleUnder(v.right, x)
+	if v.data > x do:
+		v.left = fjernAlleUnder(v.left, x)
+	return v
+		
+
+
+

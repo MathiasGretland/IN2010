@@ -108,7 +108,7 @@ og deres naboer sine naboer, og så videre, og da til slutt ha besøkt alle node
 # DFS: Gå så dypt som mulig inn i grafen som mulig, det vil si at du følger (ikke-besøkte) naboer så langt du kan;
 # BFS: Besøke alle direkte naboer før du besøker naboer sine naboer
 
-VIKTIG! BFS finner korteste stier for sammenhengende grafer som er uvektede, det gjør ikke DFS!!!!!
+VIKTIG! BFS finner korteste stier for sammenhengende grafer som er uvektede
 Men her er vi nødt til å mappe foreldrene til de ulike nodene, og basert på det så kan vi se at det danner et tre.
 Som igjen gjør at vi kan lese ut den korteste stien fra s til alle andre noder
 """
@@ -178,7 +178,7 @@ O(|V| + |E|) = altså: alle nodene + alle kantene
 Korteste stier for vektede grafer, Betyr Dijkstra algoritmen
 Vi vet at DFS bruker en stack (eller gjøres rekursivt slik som over), og BFS bruker en FIFO-kø, altså en deque (setter inn på slutten, tar fra foran). 
 Mens Dijkstra bruker heller en prioritetskø. En prioritetskø trenger en total ordning over elementene som legges på køen, altså en sorteringskriterie
-#USIKKER! Tror dijkstra kun fungerer på RETTEDE vektede grafer. Sike fungerer på urettede også.
+Dijkstra fungerer på både rettede og urettede grafer.
 
 Prioritetskøen skal holde noder som elementer, og bruke en "estimert avstand" D til sammenligning.
 D skal inneholde den korteste veien vi har funnet så langt
@@ -304,7 +304,7 @@ Boruvkas algoritme (grådig valg av kanter, parallelliserbar) -- Er lett å para
 Starter med Prim. Viktig å påpeke at det ikke har noe å si hvilken node vi starter på, siden alle skal være med til slutt,
 Her starter man på en node, og velger den kanten som er billigst til en ny node. 
 eks.: node "F" har kantene ((F, D), 3) og ((F, E), 2). Her velger vi naturligvis ((F, E), 2), da den er den billigste kanten, med vekt 2
-Da har vi dannet et lite tre, som består av (F, E), da må vi se hvilke kanter som kan fører til en ny node som ikke er med i treet vårt, og dermed velge den billigste
+Da har vi dannet et lite tre, som består av (F, E), da må vi se hvilke kanter som kan fører til en ny node som ikke er med i treet vårt, og dermed velge den billigste 
 VIKTIG KRITERIUM! Man legger aldri til kanter som danner sykler! Her er det altså viktig å holde styr på hvilke noder vi allerede har besøkt,
 slik at de ikke blir lagt til mer enn 1 gang
 Dette gjør vi helt til vi har fått med alle nodene fra den sammenhengende grafen G, inn i vårt minimale spenntre T.
