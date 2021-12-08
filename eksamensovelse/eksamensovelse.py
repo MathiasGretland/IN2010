@@ -294,7 +294,7 @@ Altså! alle alogritmene tar en vektet, sammenhengende graf G og returnerer et m
 
 Algoritmene for minimale spenntre er:
 VIKTIG! Alle har samme verste tilfellet analyse... så hvilken algoritme skal man velge?
-Prims algoritme (grådig valg av noder)
+Prims algoritme (grådig valg av noder) 
 Kruskals algoritme (grådig valg av kanter) -- På tynne grafer er Kruskal i praksis ofte raskere, Hvis man har tilgang til kantene sortert etter vekt: Kruskal raskere
 Boruvkas algoritme (grådig valg av kanter, parallelliserbar) -- Er lett å parallellisere
 """
@@ -884,7 +884,6 @@ Input: Et array A med n elementer
 Output: Et array med de samme n elementene sortert etter nøkler
 Procedure BucketSort(A):
     La B være et array med N tomme lister
-    n = A.length
     for i from 0 to n-1 Do:
         La k være nøkkelen assosiert med A[i]
         Legg til A[i] på slutten av listen B[k]
@@ -908,6 +907,49 @@ Så dersom man har små og veldefinerte kategorier så vil bucket sort være bes
 
 Kompleksitet:
 O(N + n)
+"""
+
+"""
+Radix Sort! Er nært beslektet bucket sort
+    - Noen vil ikke engang skille mellom disse algortimene
+Eksempelet vi så med å sortere kort, er faktisk en type radix sort, for husk i det eksempelet så kjørte man bucket sort 2 ganger
+en for å skille på verdi, og en for å skille på type
+En svært god intuisjon for radix sort er at det er
+    - Suksessiv anvendelse av bucket sort, formelt
+    - Altså hvis man utfører flere bucket sorts etter hverandre, så vil man ha radix sort, uformelt 
+
+Tenk derfor at Bucket sort er en enkel anvendelse av bucket sort,
+Radix sort er når vi gjør flere bøtte sorteringer basert på hvordan kategorien endrer seg hver gang.
+
+Radix sort kan brukes for data som kan ordnes leksikografisk, men hva er leksikografi?
+Leksikografiske ordninger er en generalisering av alfabetisk rekkefølge
+    - Vi kan ordne ord etter bokstavene (som i seg selv er ordnet)
+        - Der første bokstav prioriteres over andre, som prioriteres over tredje, osv...
+    - Vi kan ordne tall på samme måte
+        - Der første siffer prioriteres over andre, som prioriteres over tredje osv
+Mer generelt kan vi tenke oss tupler med symboler (a1, a2, ......, ad)
+Vi sier at (a1, a2, ......, ad) < (b1, b2, ......, bd) hvis:
+    - a1 < b1 eller
+    - a1 = b1 og (a2 ,....., ad) < (a2 ,....., bd)
+Fra korteksempelet har vi for eksempel at kløvver 7 < kløvver knekt
+    - fordi kløvver = kløvver, men 7 < knekt. Derfor er sistnevnte den avgjørende faktoren
+
+
+Pseudokode for Radix Sort
+---------------------------
+Input: Et array A med n positive heltall
+Output: Et sortert array med de samme n positive heltallene
+Procedure RadixSort(A):
+    d = antall siffer i det største tallet
+    for i from d down to 0 do:
+        A = BucketSort(A) etter det ite sifferet
+    
+    return A
+
+
+
+
+
 """
 
 
