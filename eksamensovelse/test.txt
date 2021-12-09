@@ -1,0 +1,213 @@
+Procedure DFS(G, s):
+    visited(s) = true
+    for each edge (s, w) in G do: 
+        if visited(w) is false then:
+            DFS(G, w)
+
+O(|V| + |E|)
+
+Procedure BFS(G, s):
+    Initialize deque as emtpy FIFO stack:
+    deque.append(s)
+    visited(s) = true
+
+    while deque is not empty:
+        v = deque.popleft()
+        for each edge (v, w) in G do:
+            if visited(w) = false then:
+                visited(w) = true
+                deque.append(w)
+    
+    return visited
+
+O(|V| + |E|)
+
+Procedure TopologiskSortering(G):
+    Initialize S as empty stack
+    Initialize D as empty map
+    for each vertex u in G do:
+        inCount(u) = degin(u) //Dette finner inngraden til noden
+        if inCount(u) = 0 then:
+            S.push(u)
+    
+    i = 1
+    while S is not empty:
+        v = S.pop()
+        D[v] = i
+        i = i + 1
+        for each edge (v, w) in G do:
+            inCount(w) = inCount(w) - 1
+            if inCount(w) = 0 then:
+                S.push(w)
+
+    if i > n then:
+        return D
+    return "G has a cycle"
+
+O(|V| + |E|)
+
+
+
+
+Procedure Dijkstra(G, s):
+    Initialize Q as empty priority queue
+    Initialize D as empty map
+    for each vertex v in G do:
+        D[v] = infinity
+        Q.add(v, D[v])
+    D[s] = 0
+
+    while Q is not empty:
+        v = Q.removeMin()
+        for each edge (v, t) in G do:
+            if D[v] + w(v,t) < D[t] then:
+                D[t] = D[v] + w(v,t)
+                change value of t in Q to D[t]
+    
+    return D
+
+O(|E| log(|V|))
+
+
+Procedure Bellman-Ford(G, s):
+    Initialize D as empty map
+    for each vertex v in G do:
+        D[v] = infinity
+    D[s] = 0
+
+    for i from 0 to n - 1 do:
+        for each edge (v, t) in G do:
+                if D[v] + w(v,t) < D[t] then:
+                    D[t] = D[v] + w(v,t)
+    
+    for each edge(v,w) in G do:
+        if D[v] + w((v,w)) < D[t] then:
+            return "G has a negative cycle"
+    return D
+
+O(|E| * |V|)
+
+
+Procedure Prim(G):
+    Initialize T as empty tree
+    Initialize D as empty map
+    Initialize Q as empty heap
+    for each vertex u in G do:
+        D[u] = infinity
+        Q.add((u, None), D[u])
+    pick v from V //Velg tilfeldig node, da det spiller ingen rolle hvor vi starter i grafen
+    D[v] = 0
+    while Q is not empty:
+        (s,e) = Q.pop
+        add s and e to T
+        for each edge a (s, z) where z in Q do:
+            if w(a) < D[z] then:
+                D[z] = w(a)
+                change value of z in Q to ((z,a), D[z])
+
+    return T
+
+O(|E| log(|V|))
+
+Procedure Kruskal(G):
+    Initialize T as empty tree
+    Initialize Q with all edges
+    for each vertex u in G do:
+        define    C(u) = {u}
+    
+    While T has fewer than n - 1 edges then:
+        (s, e) = Q.pop()
+        if C(s) is not C(e) then:
+            add (s, e) to T
+            C[s], C[e] = C[s] union C[e]
+
+    return T
+
+O(|E| log(|V|))
+
+
+Procedure BubbleSort(A):
+    for i from 0 to n -2 do:
+        for j from 0 to n - 1 do:
+            if A[j] > A[j+1] then
+                A[j], A[j+1] = A[j+1], A[j]
+
+O(n^2)
+
+Procedure SelectionSort(A):
+    for i from 0 to n - 1 do:
+        k = i 
+        for j from i + 1 down to n - 1 do:
+            if A[j] < A[k] then:
+                k = j
+        if i is not k then:
+            A[i], A[k] = A[k], A[i]
+
+
+        
+Procedure InsertionSort(A):
+    for i from 1 to n - 1 do:
+        j = i
+        while j > 0 and A[j] < A[j-1] do:
+            A[j], A[j-1] = A[j-1], A[j]
+            j = j - 1
+
+Procedure Bubbledown(A, i, n):
+    largest = i
+    left = 2*i + 1
+    right = 2*i + 2
+
+    if left < n and A[left] > A[largest] then:
+        largest, left = left, largest
+
+    if right < n and A[right] > A[largest] then:
+        largest, right = right, largest
+    
+    if largest is not i then:
+        A[largest], A[i] = A[i], A[largest]
+        BubbleDown(A, largest, n)
+
+Procedure BuildMaxHeap(A)
+    n = A.length
+    for i from 0 to n/2 do:
+        Bubbledown(A, i, n)
+    return A
+
+Procedure heapSort(A):
+    BuildMaxHeap(A)
+    for i from n-1 to 0 do:
+        A[0], A[i] = A[i], A[0]
+        Bubbledown(A, 0, i)
+    return A
+
+
+Procedure merge(A1, A2, A):
+    i = 0
+    j = 0
+
+    while i < |A1| and j < |A2| then:
+        if A1[i] < A2[j] then:
+            A[i + j] = A1[i]
+            i = i + 1
+        else:
+            A[i + j] = A2[j]
+            j = j + 1
+        
+    while i < |A1| then:
+        A[i + j] = A1[i]
+        i = i + 1
+
+    while j < |A2| then:
+        A[i + j] = A2[j]
+        j = j + 1
+
+    return A
+
+Procedure MergeSort(A)
+    n = A.length
+    if n <= 1 then:
+        return A
+    i = n/2
+    A1 = MergeSort(A[0... i-1])
+    A2 = MergeSort(A[i... n-1])
+    return merge(A1,A2,A)
